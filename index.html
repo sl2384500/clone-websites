@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple LMS</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #333;
+    }
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 6px;
+    }
+    input, button {
+        padding: 8px;
+        margin: 5px 0;
+        width: 100%;
+    }
+    button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .course {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 5px;
+    }
+    video {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .progress {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .certificate {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        border: 2px solid #333;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Learning Management System</h1>
+
+    <h2>Create Course</h2>
+    <input type="text" id="courseTitle" placeholder="Course Title">
+    <input type="file" id="videoFile" accept="video/*">
+    <button onclick="createCourse()">Create Course</button>
+
+    <h2>Student Enrollment</h2>
+    <input type="text" id="studentName" placeholder="Student Name">
+    <button onclick="enrollStudent()">Enroll Student</button>
+
+    <div id="courses"></div>
+
+    <div class="certificate" id="certificate">
+        <h2>Certificate of Completion</h2>
+        <p>This certifies that</p>
+        <h3 id="certStudent"></h3>
+        <p>has successfully completed the course</p>
+        <h3 id="certCourse"></h3>
+    </div>
+</div>
+
+<script>
+let course = null;
+let student = "";
+let completed = false;
+
+function createCourse() {
+    const title = document.getElementById("courseTitle").value;
+    const file = document.getElementById("videoFile").files[0];
+
+    if (!title || !file) {
+        alert("Please enter course title and upload video");
+        return;
+    }
+
+    const videoURL = URL.createObjectURL(file);
+
+    course = { title, videoURL };
+
+    document.getElementById("courses").innerHTML = `
+        <div class="course">
+            <h3>${title}</h3>
+            <video controls onended="markCompleted()">
+                <source src="${videoURL}">
+            </video>
+            <div class="progress" id="progress">Progress: 0%</div>
+        </div>
+    `;
+}
+
+function enrollStudent() {
+    student = document.getElementById("studentName").value;
+    if (!student) {
+        alert("Enter student name");
+        return;
+    }
+    alert(student + " enrolled successfully!");
+}
+
+function markCompleted() {
+    if (!student) {
+        alert("Enroll a student first!");
+        return;
+    }
+    completed = true;
+    document.getElementById("progress").innerText = "Progress: 100%";
+    generateCertificate();
+}
+
+function generateCertificate() {
+    if (completed) {
+        document.getElementById("certificate").style.display = "block";
+        document.getElementById("certStudent").innerText = student;
+        document.getElementById("certCourse").innerText = course.title;
+    }
+}
+</script>
+
+</body>
+</html>
